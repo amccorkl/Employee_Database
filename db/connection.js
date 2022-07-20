@@ -1,16 +1,17 @@
 const mysql = require("mysql2");
-console.log("database", process.env.DATABASE);
 require("dotenv").config();
 
 //creating a connection to the database
 const db = mysql.createConnection(
     {
-        host: process.env.DB_HOST || "localhost",
-        password: process.env.DB_PASSWORD || "password",
-        user: process.env.DB_USER || "root",
-        database: process.env.DATABASE || "employee_db",
-    },
-    console.log("DB connected successfully")
-    );
+        host: process.env.DB_HOST,
+        port: process.env.PORT,
+        password: process.env.DB_PASSWORD,
+        user: process.env.DB_USER,
+        database: process.env.DATABASE,
+        //needed to allow multiple query statements in arrays
+        multipleStatements: true
+    }
+);
 
     module.exports = db;
