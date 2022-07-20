@@ -88,8 +88,27 @@ const viewDepts = () => {
       console.log("Departments:\n");
       startMenu();
     });
-  }
+}
 
+const addDept = () => {
+    inquirer.prompt(
+        {
+           type: "input",
+           message: "What deparment name would you like to add?",
+           name: "newDept"
+        }
+    ).then((result) => {
+        db.query("INSERT INTO department(name) VALUES (?)", result.newDept, (err, res) => {
+            if (err) {
+                console.log(err);
+              }
+              console.log(`Added department:\n ${result.newDept}`);
+              startMenu();
+
+            }
+        )
+    });
+}
 
 
 startMenu();
