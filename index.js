@@ -12,14 +12,14 @@ const db = mysql.createConnection({
 });
 
 //connect the database to the inquirer questions
-db.connect(function(error) {
-  if (error) throw error;
-  console.log(`Connected to the port: ${port} `);
+// db.connect(function(error) {
+//   if (error) throw error;
+//   console.log("Connected to the database");
 
-  //console.log(add in ascii art here if wanted)
+//   //console.log(add in ascii art here if wanted)
 
-  startMenu();
-});
+//   startMenu();
+// });
 
 // user questions and prompts to start the app
 const startMenu = () => {
@@ -29,24 +29,22 @@ const startMenu = () => {
         type: "list",
         message: "What would you like to do?",
         name: "mainMenu",
-        // loop: false,
         choices: [
-          { name: "Add a department", value: "addDept" },
-          { name: "Add a role", value: "addRole" },
-          { name: "Add an employee", value: "addEmployee" },
-          { name: "View Department list", value: "viewDepts" },
-          { name: "View Role list", value: "viewRoles" },
-          { name: "View Employee List", value: "viewEmployees" },
-          { name: "Update an employee", value: "updateEmployee" },
-          { name: "Delete a department", value: "deleteDept" },
-          { name: "Delete a role", value: "deleteRole" },
-          { name: "Delete an employee", value: "deleteEmployee" },
-          { name: "Exit", value: "exit" },
+          "Add a department", 
+          "Add a role", 
+          "Add an employee", 
+          "View Department list", 
+          "View Role list", 
+          "View Employee List", 
+          "Delete a department", 
+          "Delete a role", 
+          "Delete an employee", 
+          "Exit", 
         ],
       },
     ])
-    .then(({ answer }) => {
-        switch (answer) {
+    .then(({ mainMenu }) => {
+        switch (mainMenu) {
             case "Add a department":
                 addDept();
                 break;
@@ -80,3 +78,5 @@ const startMenu = () => {
         }
     });
 };
+
+startMenu();
