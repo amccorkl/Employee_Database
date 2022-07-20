@@ -30,10 +30,10 @@ const startMenu = () => {
         message: "What would you like to do?",
         name: "mainMenu",
         choices: [
+          "View Department list",
           "Add a department", 
           "Add a role", 
           "Add an employee", 
-          "View Department list", 
           "View Role list", 
           "View Employee List", 
           "Delete a department", 
@@ -45,6 +45,9 @@ const startMenu = () => {
     ])
     .then(({ mainMenu }) => {
         switch (mainMenu) {
+            case "View Department list":
+                viewDepts();
+                break;
             case "Add a department":
                 addDept();
                 break;
@@ -53,9 +56,6 @@ const startMenu = () => {
                 break;
             case "Add an employee":
                 addEmployee();
-                break;
-            case "View Department list":
-                viewDepts();
                 break;
             case "View employee list":
                 viewEmployees();
@@ -78,5 +78,18 @@ const startMenu = () => {
         }
     });
 };
+
+const viewDepts = () => {
+    db.query('SELECT name FROM department ORDER BY id', (err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      console.table(res);
+      console.log("Departments:\n");
+      startMenu();
+    });
+  }
+
+
 
 startMenu();
