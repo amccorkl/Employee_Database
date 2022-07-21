@@ -48,6 +48,12 @@ const startMenu = () => {
             case "View Department list":
                 viewDepts();
                 break;
+            case "View employee list":
+                viewEmployees();
+                break;
+            case "View roles list":
+                viewRoles();
+                break
             case "Add a department":
                 addDept();
                 break;
@@ -56,9 +62,6 @@ const startMenu = () => {
                 break;
             case "Add an employee":
                 addEmployee();
-                break;
-            case "View employee list":
-                viewEmployees();
                 break;
             case "Update an employee":
                 updateEmployee();
@@ -79,13 +82,37 @@ const startMenu = () => {
     });
 };
 
+// working
 const viewDepts = () => {
     db.query('SELECT name FROM department ORDER BY id', (err, res) => {
       if (err) {
-        console.log(err);
+        return "Departments can't be retrieved";
+      } else {
+        console.table(res);
       }
-      console.table(res);
-      console.log("Departments:\n");
+      startMenu();
+    });
+}
+
+// won't show yet
+const viewEmployees = () => {
+    db.query('SELECT * FROM employee', (err, res) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.table(res);
+      }
+      startMenu();
+    });
+}
+
+const viewRoles = () => {
+    db.query('SELECT * FROM roles', (err, res) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.table(res);
+      }
       startMenu();
     });
 }
@@ -101,8 +128,77 @@ const addDept = () => {
         db.query("INSERT INTO department(name) VALUES (?)", result.newDept, (err, res) => {
             if (err) {
                 console.log(err);
+              } else console.table(`Added department:\n ${result.newDept}`);
+              startMenu();
+
+            }
+        )
+    });
+}
+
+const addRole = () => {
+    db.query("SELECT * FROM department", (err, res) => {
+        if (err) {
+            console.log(err);
+          }
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What role would you like to add?",
+                name: "newRole"
+            },
+            {
+                type: "input",
+                message: "what salary would you like to assign this role",
+                name: "roleSalary",
+            },
+            {
+                type: "list",
+                message: "In which department does the role belong?",
+                name: "roleDept",
+                choices: [
+                    {name: "HR", value: "1"},
+                    {name: "Engineering", value: "2"},
+                    {name: "Sales", value: "3"},
+                    {name: "Finance", value: "4"},
+                    {name: "Legal", value: "5"}
+                    
+                ]
+            },
+        ])
+        .then((result) => {
+            db.query("INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)",
+                [
+                    result.newRole,
+                    result.roleSalary,
+                    result.roleDept
+                ], 
+                (err, res) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.table(`Added a new role:\n ${res.newRole}`);
+                    startMenu();
+                }
+            )
+
+        })
+    });
+}
+
+const addEmployee = () => {
+    inquirer.prompt(
+        {
+           type: "input",
+           message: "What employee would you like to add?",
+           name: "newEmployee"
+        }
+    ).then((result) => {
+        db.query("INSERT INTO employee({first_name, last_name, role_id, manager_id}) VALUES (?)", result.newEmployee, (err, res) => {
+            if (err) {
+                console.log(err);
               }
-              console.log(`Added department:\n ${result.newDept}`);
+              console.table(`Added new employee:\n ${result.newEmployee}`);
               startMenu();
 
             }
