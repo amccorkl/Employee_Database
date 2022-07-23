@@ -31,9 +31,6 @@ const startMenu = () => {
           "View role list", 
           "View employee list", 
           "Update employee role",
-          "Delete a department", 
-          "Delete a role", 
-          "Delete an employee", 
           "View all the company stats",
           "exit", 
         ],
@@ -61,15 +58,6 @@ const startMenu = () => {
                 break;
             case "Update employee role":
                 updateEmployeeRole();
-                break;
-            case "Delete a department":
-                deleteDept();
-                break;
-            case "Delete a role":
-                deleteRole();
-                break;
-            case "Delete an employee":
-                deleteEmployee();
                 break;
             case "View all the company stats":
                 viewCompany();
@@ -229,13 +217,12 @@ const updateEmployeeRole = () => {
             console.log(err);
         }
 
-        let employeeChoices = res.map(employee => {
-            return {
-                name: employee.first_name,
-                value: employee.id
-            }
-        })
-
+    let employeeChoices = res.map(employee => {
+        return {
+            name: employee.first_name,
+            value: employee.id
+        }
+    })
         inquirer.prompt([
             {
                 type: "list",
