@@ -1,11 +1,9 @@
+//connect to the .env folder
 require("dotenv").config()
 
-const logo = require("asciiart-logo");
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
- 
-
 
 const db = mysql.createConnection({
     host: "localhost",
@@ -69,7 +67,7 @@ const startMenu = () => {
     });
 };
 
-// working
+// Departments show up by id number
 const viewDepts = () => {
     const query = 'SELECT name FROM department ORDER BY id';
     db.query(query, (err, res) => {
@@ -81,19 +79,18 @@ const viewDepts = () => {
     });
 }
 
-// working
+// created using the promise language and destructured response, view Company shows up with all the details next
 const viewEmployees =  () => {
     const query = 'SELECT * FROM employee'
     db.promise().query(query).then(([res]) => {
         console.table(res);
-        startMenu();
-        
+        viewCompany();
     });
-    // add the viewCompany()here too?
+    
     
 };
 
-//  working
+//  after viewing the roles, the entire company's information db shows up
 const viewRoles = () => {
     const query = 'SELECT * FROM roles';
     db.query(query, (err, res) => {
@@ -101,11 +98,11 @@ const viewRoles = () => {
         console.log(err);
       } 
       console.table(res);
-      startMenu();
+      viewCompany();
     });
 };
 
-// working
+// after adding a department, all the departments show in the view
 const addDept = () => {
     inquirer.prompt([
         {
@@ -124,7 +121,7 @@ const addDept = () => {
     });
 }
 
-// working
+// trying the newly learned async function, may over the departments already there to help connect the user's responses
 const addRole = async () => {
     const [departments] = await db.promise().query("SELECT * FROM department")
     const departmentsArr = departments.map(department => ({
@@ -167,7 +164,7 @@ const addRole = async () => {
 };
 
 
-// working
+// Employees added into hard coded roles
 const addEmployee = () => {
     inquirer.prompt([
         {
@@ -210,7 +207,7 @@ const addEmployee = () => {
     });
 };
 
-
+//employee list generated for user to choose from to update the employee
 const updateEmployeeRole = () => {
     db.query("SELECT * FROM employee", (err, res) => {
         if (err) {
@@ -251,12 +248,13 @@ const updateEmployeeRole = () => {
                     console.log(err);
                 }
                 console.table(res);
-                startMenu()
+                viewEmployees();
             })
         })  
     }) 
 };
 
+//all the company details in one table
 const viewCompany = () => {
     const query = "SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name, roles.title, department.name AS department, roles.salary FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id"
     db.query(query, (err, res) => {
@@ -264,18 +262,8 @@ const viewCompany = () => {
             console.log(err);
         }
         console.table(res);
+        startMenu();
     })
 }
-
-
-
-// Extras...
-//delete departments, roles, and employees
-
-// viewEmployeesByManager
-// viewEmployeesByDept
-// updateManagers
-
-
 
 startMenu();

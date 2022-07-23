@@ -8,7 +8,7 @@
     "dev": "nodemon server.js"
   },
   "author": "Anne McCorkle",
-  "license": "ISC",
+  "license": "MIT License",
   "dependencies": {
     "asciiart-logo": "^0.2.7",
     "console.table": "^0.10.0",
