@@ -1,9 +1,10 @@
+require("dotenv").config()
+
 const logo = require("asciiart-logo");
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
  
-require("dotenv").config()
 
 
 const db = mysql.createConnection({
@@ -29,11 +30,12 @@ const startMenu = () => {
           "Add an employee", 
           "View role list", 
           "View employee list", 
+          "Update employee role",
           "Delete a department", 
           "Delete a role", 
           "Delete an employee", 
           "View all the company stats",
-          "Exit Program", 
+          "exit", 
         ],
       },
     ])
@@ -57,8 +59,8 @@ const startMenu = () => {
             case "Add an employee":
                 addEmployee();
                 break;
-            case "Update an employee":
-                updateEmployee();
+            case "Update employee role":
+                updateEmployeeRole();
                 break;
             case "Delete a department":
                 deleteDept();
@@ -72,8 +74,8 @@ const startMenu = () => {
             case "View all the company stats":
                 viewCompany();
                 break;
-            case "Exit Program":
-                db.end();
+            case "exit":
+                process.exit();
                 break;
         }
     });
@@ -97,7 +99,10 @@ const viewEmployees =  () => {
     db.promise().query(query).then(([res]) => {
         console.table(res);
         startMenu();
+        
     });
+    // add the viewCompany()here too?
+    
 };
 
 //  working
@@ -217,9 +222,53 @@ const addEmployee = () => {
     });
 };
 
-// const updateEmployee = () => {
-    
-// };
+
+const updateEmployeeRole = () => {
+    db.query("SELECT * FROM employee", (err, res) => {
+        if (err) {
+            console.log(err);
+        }
+
+        let employeeChoices = res.map(employee => {
+            return {
+                name: employee.first_name,
+                value: employee.id
+            }
+        })
+
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "What employee do you want to update?",
+                name: "updateEmployee",
+                choices: employeeChoices
+            },
+            {
+                type: "list",
+                message: "What new role do you want them to have?",
+                name: "newRole",
+                choices: [
+                    {name: "Software Engineer", value: "2"},
+                    {name: "Sales Representative", value: "3"},
+                    {name: "Acountant", value: "4"},
+                    {name: "Legal", value: "5"}
+                ] 
+            },
+        ])
+        .then((result) => {
+            let updateEmployee = result.updateEmployee;
+            let newRole = result.newRole;
+            let query = `UPDATE employee SET role_id = '${newRole}' WHERE id = '${updateEmployee}'`;
+            db.query(query, (err, res) => {
+                if (err) {
+                    console.log(err);
+                }
+                console.table(res);
+                startMenu()
+            })
+        })  
+    }) 
+};
 
 const viewCompany = () => {
     const query = "SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name, roles.title, department.name AS department, roles.salary FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id"
@@ -230,6 +279,7 @@ const viewCompany = () => {
         console.table(res);
     })
 }
+
 
 
 // Extras...
